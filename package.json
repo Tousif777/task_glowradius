@@ -4,7 +4,8 @@
   "description": "This is a testing project for scraping and parsing.",
   "scripts": {
     "start:scrape": "node scrape_Server.js",
-    "start:parse": "node parse_Server.js"
+    "start:parse": "node parse_Server.js",
+    "start:both": "concurrently \"nodemon scrape_Server.js\" \"nodemon parse_Server.js\""
   },
   "dependencies": {
     "axios": "^1.6.8",
