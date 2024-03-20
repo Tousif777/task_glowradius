@@ -1,3 +1,6 @@
+// Load environment variables from .env file
+require("dotenv").config();
+
 const express = require("express");
 const bodyParser = require("body-parser");
 const axios = require("axios");
@@ -6,7 +9,8 @@ const fs = require("fs");
 const path = require("path");
 
 const app = express();
-const PORT = 4000;
+const DEFAULT_PARSE_PORT = 4000;
+const DEFAULT_SCRAPE_PORT = 3000;
 
 const OUTPUT_FOLDER = path.join(__dirname, "output");
 
@@ -19,12 +23,17 @@ if (!fs.existsSync(OUTPUT_FOLDER)) {
     fs.mkdirSync(OUTPUT_FOLDER);
 }
 
+// Set default values if environment variables are not provided
+const URL = process.env.URL || "http://localhost";
+const PARSE_PORT = process.env.PARSE_PORT || DEFAULT_PARSE_PORT;
+const SCRAPE_PORT = process.env.SCRAPE_PORT || DEFAULT_SCRAPE_PORT;
+
 app.post("/get-site-data", async (req, res) => {
     const { domain } = req.body;
-    const callbackUrl = `http://localhost:${PORT}/receive-site-data`;
+    const callbackUrl = `${URL}:${PARSE_PORT}/receive-site-data`;
 
     try {
-        await axios.post("http://localhost:3000/scrape-async", {
+        await axios.post(`${URL}:${SCRAPE_PORT}/scrape-async`, {
             url: domain,
             callback: callbackUrl,
         });
@@ -78,6 +87,7 @@ app.post("/receive-site-data", (req, res) => {
     }
 });
 
+const PORT = process.env.PARSE_PORT || DEFAULT_PARSE_PORT;
 app.listen(PORT, () => {
-    console.log(`Parse server listening at http://localhost:${PORT}`);
+    console.log(`Parse server listening at ${URL}:${PORT}`);
 });

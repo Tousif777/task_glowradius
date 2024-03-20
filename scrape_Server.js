@@ -1,9 +1,13 @@
+// Load environment variables from .env file
+require("dotenv").config();
+
 const express = require("express");
 const axios = require("axios");
 const bodyParser = require("body-parser");
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.SCRAPE_PORT || 3000;
+const URL = process.env.URL || "http://localhost";
 
 app.use(bodyParser.json());
 
@@ -31,5 +35,5 @@ app.post("/scrape-async", async (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`Scrape server listening at http://localhost:${PORT}`);
+    console.log(`Scrape server listening at ${URL}:${PORT}`);
 });
